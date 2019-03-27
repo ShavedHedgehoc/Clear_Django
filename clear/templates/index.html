@@ -2,11 +2,33 @@
 
 {% block content %}
 <form>
-<input type="date">
-input type
-</form>
+<input type="date" name="date" value="{{select_date}}">
+<input type="submit" name="filter" value="Отобрать">
+<input type="submit" name="backward" value="Назад">
+<input type="submit" name="forward" value="Вперед">
 
-{% for rec in records%}
-<p>{{ rec }}</p>
-{% endfor %}
+<table class="table table-sm table-striped ">
+    <thead class="thead-inverse">
+      <tr>
+        {% for h in headers %}
+          <th class="text-center font-italic">{{h}}</th>
+        {% endfor %}              
+      </tr>
+    </thead>
+    <tbody>
+      {%for i in records %}
+        <tr>
+            <td class="text-center">{{i.p_date|date:"d-m-Y"}}</td>
+            <td class="text-left">{{i.p_marking}}</td>
+            <td class="text-center">{{i.p_batch}}</td>
+            <td class="text-center">{{i.p_plan}}</td>
+            <td class="text-center">{{i.p_apparatus}}</td>
+            <td class="text-center">{{i.p_container}}</td>
+            <td class="text-center">{{i.p_conveyor}}</td>          
+        </tr> 
+      {% endfor %} 
+    </tbody>   
+  </table>
+</form>
+{{select_date}}
 {% endblock %}
