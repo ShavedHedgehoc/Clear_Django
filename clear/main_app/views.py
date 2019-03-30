@@ -9,7 +9,10 @@ from .models import Apparatus, Container, Conveyor
 
 
 class Prod_view(ListView):
-    pass
+    template_name="index.html"
+    
+    def get(self, request, *args, **kwargs):
+
 
 
 def index(request):
