@@ -1,0 +1,26 @@
+<table class="table table-sm table-striped ">
+        <thead class="thead-inverse">
+          <tr>
+            {% for h in headers %}
+              <th class="text-center font-italic">{{h}}</th>
+            {% empty%}
+            <th class="text-center font-italic">Нет данных для загрузки...</th>
+            {% endfor %}              
+          </tr>
+        </thead>
+        <tbody>
+          {%for row in records %}
+            <tr>
+                <td class="text-center">{{row.date|date:"d-m-Y"}}</td>
+                <td class="text-left">{{row.marking}}</td>
+                <td class="text-center">{{row.batch}}</td>
+                <td class="text-center">{{row.plan}}</td>
+                <td class="text-center">{{row.apparatus}}</td>
+                <td class="text-center">{{row.container}}</td>
+                <td class="text-center">{{row.conveyor}}</td>          
+            </tr> 
+          {% endfor %} 
+    </tbody>   
+</table>
+
+

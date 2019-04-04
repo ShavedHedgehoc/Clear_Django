@@ -1,10 +1,27 @@
-<html>
-<title>Example upload : pyexcel example</title>
-<body>
-<form method=POST enctype=multipart/form-data action="">
-{% csrf_token %}
-    <input type=file name=excel>
-	<input type=submit value="upload">
-</form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content%}
+<section class="a">
+    <div class="container-fluid" style="height: 400; position: fixed;">
+        <div class="row" >
+            <form method=POST enctype=multipart/form-data action="">
+                {% csrf_token %}
+                <div class="custom-file" id="ff">
+                    <input type=file class = "custom-file-input" name=excel>
+                    <label class="custom-file-label" for=excel>Имя файла</label>
+                    <input type="submit" class="btn btn-secondary btn-block" value="Загрузить">      
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="b">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 col-lg-6" >
+                {% include "2.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
