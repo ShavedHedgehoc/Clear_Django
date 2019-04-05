@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main_app.urls')),    
     path('', include('upload.urls')),   
+    path('', include('docview.urls')),
 ]

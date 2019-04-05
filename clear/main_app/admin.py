@@ -6,6 +6,7 @@ from .models import Apparatus, Container, Conveyor, Batch, Marking
 from .models import Production, App_time, Conv_time, Plug_time, Prod_time
 from .models import Start_time, Supp_time
 
+
 admin.site.register(Apparatus)
 admin.site.register(Container)
 admin.site.register(Conveyor)

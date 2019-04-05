@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+Файлов на сервере: {{files}}
+<table>
+    <tbody>    
+        {% for i in records %}
+        <tr>
+            <td>{{i.batch}}</td>
+            <td>{{i.material.code}}</td>
+            <td>{{i.material.material_name}}</td>
+            <td>{{i.lot}}</td>
+            <td>{{i.quantity}}</td>
+            <td>{{i.w_user}}</td>
+        </tr>
+        {% empty %}
+        <td>Задайте параметры для отображения...</td>
+        {% endfor %}
+</tbody>
+</table>
+{% endblock%}

@@ -1,0 +1,23 @@
+<table>
+    <tbody>     
+            <tr>
+            <td rowspan=5>
+                {{records.ShtrihkodEmkosti}}<br>
+                {{records.Varka}}<br>
+                {{records.Vypolnil}}
+            </td>
+            
+            {% for i in records.currentItems %}
+            
+            
+            <td>{{i.productId}}</td>
+            <td>{{i.productName}}</td>
+            <td>{{i.Partiya}}</td>
+            <td>{{i.currentQuantity}}</td>
+            
+           
+        </tr>
+        {% endfor %}
+</tbody>
+</table>
+
