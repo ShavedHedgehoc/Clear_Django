@@ -1,15 +1,36 @@
 {% extends "base.html" %}
-
 {% block content %}
 Файлов на сервере: {{files}}
-<table>
+<form>
+<div class="form-group">
+<div>
+<label for ="batch">Варка</label>
+<input type="text" name="batch" id="batch" value="">
+<input type="checkbox" name="batch-use">
+</div>
+<div>
+<label for ="material">Сырье</label>
+<input type="text" name="material" id="material" value="">
+</div>
+<div>
+<label for ="lot">Партия</label>
+<input type="text" name="lot" id="lot" value=""> 
+</div>
+<input type="submit" name="filter" value="Отобрать">
+
+</div>
+
+
+</form>
+
+<table class="table table-striped">
     <tbody>    
         {% for i in records %}
-        <tr>
+        <tr>        
             <td>{{i.batch}}</td>
             <td>{{i.material.code}}</td>
             <td>{{i.material.material_name}}</td>
-            <td>{{i.lot}}</td>
+            <td><a href>{{i.lot}}</a></td>
             <td>{{i.quantity}}</td>
             <td>{{i.w_user}}</td>
         </tr>

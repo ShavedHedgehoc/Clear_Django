@@ -13,17 +13,23 @@ from .models import(
 
 
 def get_documents_list():
-    response = requests.get(
-        "http://srv-webts:9000/MobileSMARTS/api/v1/Docs/Vzveshivanie?$select=id")
-    get_data = response.json()
+    try:
+        response = requests.get(
+            "http://srv-webts:9000/MobileSMARTS/api/v1/Docs/Vzveshivanie?$select=id")
+        get_data = response.json()
+    except:
+        pass
     return get_data
 
 
 def get_documents_quant():
-    response = requests.get(
-        "http://srv-webts:9000/MobileSMARTS/api/v1/Docs/Vzveshivanie?$select=none&$count=true")
-    data = response.json()
-    quant = data['@odata.count']
+    try:
+        response = requests.get(
+            "http://srv-webts:9000/MobileSMARTS/api/v1/Docs/Vzveshivanie?$select=none&$count=true")
+        data = response.json()
+        quant = data['@odata.count']
+    except:
+        quant = "Server not found"
     return quant
 
 
@@ -78,22 +84,23 @@ class Weighting_view(ListView):
     def get_context_data(self, **kwargs):
         context = super(Weighting_view, self).get_context_data(**kwargs)
         filter_set = self.get_queryset()
-        if self.request.GET.get('date'):
-            if self.request.GET.get('filter'):
-                date = self.request.GET.get('date')
-                filter_set = filter_set.filter(p_date=date)
-                select_date = date
-                context['select_date'] = select_date
-            if self.request.GET.get('forward'):
-                date = self.request.GET.get('date')
-                filter_set = filter_set.filter(p_date=inc_date(date))
-                select_date = inc_date(date)
-                context['select_date'] = select_date
-            if self.request.GET.get('backward'):
-                date = self.request.GET.get('date')
-                filter_set = filter_set.filter(p_date=dec_date(date))
-                select_date = dec_date(date)
-                context['select_date'] = select_date
+
+    def get_context_data(self, **kwargs):
+        context = super(Weighting_view, self).get_context_data(**kwargs)
+        filter_set = self.get_queryset()
+        if self.request.GET.get('filter'):
+            if self.request.GET.get('batch'):
+                batch = self.request.GET.get('batch')
+                filter_set = filter_set.filter(batch__batch_name=batch)
+            if self.request.GET.get('material'):
+                material = self.request.GET.get('material')
+                filter_set = filter_set.filter(
+                    material__code=material)
+            if self.request.GET.get('lot'):
+                lot = self.request.GET.get('lot')
+                filter_set = filter_set.filter(lot__lot_code=lot)
+
         context['records'] = filter_set
         context['files'] = get_documents_quant()
+
         return context

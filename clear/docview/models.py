@@ -1,31 +1,60 @@
+import datetime
 from django.contrib.auth.models import User
 from django.db import models
 
 
 class Row_id(models.Model):
-    """Дата-время-терминал, добавлять поля переопределением метода записи"""
+
     r_id = models.CharField(max_length=20, unique=True)
+    r_date = models.DateField(blank=True, editable=False)
+    r_time = models.TimeField(blank=True, editable=False)
+    r_device = models.CharField(max_length=3, blank=True, editable=False)
 
     class Meta:
         ordering = ['r_id']
+
+    def save(self, *args, **kwargs):
+        save_date = datetime.datetime.strptime(self.r_id[3:11], '%d%m%Y')
+        self.r_date = save_date.strftime('%Y-%m-%d')
+        save_time = datetime.datetime.strptime(self.r_id[11:17], '%H%M%S')
+        self.r_time = save_time.strftime('%H:%M:%S')
+        self.r_device = self.r_id[-3:]
+        super(Row_id, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.r_id
 
 
 class Batch_pr(models.Model):
+
     batch_name = models.CharField(max_length=20, unique=True)
+    b_year = models.DecimalField(
+        max_digits=1, decimal_places=0, blank=True, editable=False)
+    b_month = models.CharField(max_length=1, blank=True, editable=False)
+    b_number = models.DecimalField(
+        max_digits=4, decimal_places=0, blank=True, editable=False)
 
     class Meta:
-        ordering = ['batch_name']
+        ordering = ['b_year', 'b_month', 'b_number']
+
+    def save(self, *args, **kwargs):
+        self.b_year = self.batch_name[-1]
+        self.b_month = self.batch_name[-2]
+        self.b_number = self.batch_name[:-2]
+        super(Batch_pr, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.batch_name
 
 
 class Raw_material(models.Model):
+
     code = models.CharField(max_length=6, unique=True)
     material_name = models.CharField(max_length=120, unique=True)
+    unit = models.CharField(max_length=3, default="кг")
+    rate = models.IntegerField(default=1)
+    barcode = models.CharField(
+        max_length=13, unique=True, blank=True, null=True)
 
     class Meta:
         ordering = ['material_name']
@@ -35,6 +64,7 @@ class Raw_material(models.Model):
 
 
 class Lot(models.Model):
+
     lot_code = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
@@ -42,6 +72,7 @@ class Lot(models.Model):
 
 
 class W_user(models.Model):
+
     w_user_name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -49,6 +80,7 @@ class W_user(models.Model):
 
 
 class Weighting(models.Model):
+
     weighting_id = models.ForeignKey(Row_id, on_delete=models.CASCADE)
     batch = models.ForeignKey(Batch_pr, on_delete=models.CASCADE)
     material = models.ForeignKey(Raw_material, on_delete=models.CASCADE)
