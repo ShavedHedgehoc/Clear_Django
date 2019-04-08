@@ -1,42 +1,107 @@
 {% extends "base.html" %}
 {% block content %}
-Файлов на сервере: {{files}}
-<form>
-<div class="form-group">
-<div>
-<label for ="batch">Варка</label>
-<input type="text" name="batch" id="batch" value="">
-<input type="checkbox" name="batch-use">
-</div>
-<div>
-<label for ="material">Сырье</label>
-<input type="text" name="material" id="material" value="">
-</div>
-<div>
-<label for ="lot">Партия</label>
-<input type="text" name="lot" id="lot" value=""> 
-</div>
-<input type="submit" name="filter" value="Отобрать">
+<!-- Файлов на сервере: {{files}} -->
+<div class="container-fluid">        
+    <table class="table  table-striped table-sm">
+        <thead class="thead">
+            <tr class="d-flex">
+                <th class="text-center col-1">Варка</th>
+                <th class="text-center col-1">Код 1С</th>
+                <th class="text-center col-8">Наименование</th>
+                <th class="text-center col-2">Квазипартия</th>
+            </tr>
+            <form>
+            <tr class="d-flex">
+                <th class="col-1 text-center">                    
+                    <label for="batch">Варка</label>
+                    <div class="input-group">                            
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">                                    
+                                    <input type="checkbox" class="form-сheck-input" name="batch_ch" {% if batch_ch %} checked={{batch_ch}} {%endif%}> 
+                                </div>
+                            </div>                        
+                        <input type="text" class="form-control" name="batch" value= "{{batch}}" placeholder="Варка"> 
+                    </div>
+                </th>
+                <th class="col-1 text-center">
+                        <label for="code">Код 1С</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" class="form-сheck-input" name="code_ch" {% if code_ch %} checked={{code_ch}} {%endif%}> 
+                            </div>
+                        </div>
+                        <input type="text" class="form-control" name="code" value= "{{code}}" placeholder="Код 1С"> 
+                    </div>                    
+                </th>
+                <th class="col-8">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" class="form-сheck-input" name="material_ch" {% if material_ch %} checked={{material_ch}} {%endif%}> 
+                            </div>
+                        </div>
+                        <input type="text" class="form-control" name="material" value= "{{material}}" placeholder="Наименование"> 
+                    </div>                    
+                </th>
+                <th class="col-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" class="form-сheck-input" name="lot_ch" {% if lot_ch %} checked={{lot_ch}} {% endif %}> 
+                            </div>
+                        </div>
+                        <input type="text" class="form-control" name="lot" value= "{{lot}}" placeholder="Квазипартия"> 
+                    </div>                    
+                </th>
+                
+            </tr>
+            <tr class="d-flex">
+                <th class="col-12">
+                    <input class="btn btn-block btn-secondary" name="filter" type="Submit" value="Отобрать">
+                </th>
+            </tr>
+            </form>
 
+        
+        </thead>        
+        <tbody>             
+            {% for i in records %}
+            <tr class="d-flex">
+                <td class="text-center col-1" >  
+                    <div class="d-flex flex-row justify-content-between">         
+                        {{i.batch}}
+                        <p class="small"><a href class="badge badge-primary">В отбор</a></p>
+                    </div>              
+                </td>
+                <td class="text-center col-1">
+                    <div class="d-flex flex-row justify-content-between">         
+                        {{i.material.code}}
+                        <a href class="badge badge-secondary">+</a>
+                    </div>                              
+                </td>
+                <td class="text-left col-4">
+                    <div class="d-flex flex-row justify-content-between">         
+                        {{i.material.material_name}}
+                        <div class="d-flex flex-row justify-content-between">         
+                        <a href class="badge badge-secondary">...</a>
+                        <a href class="badge badge-secondary">^</a>
+                        </div>
+                    </div>          
+                </td>
+                <td class="text-left col-2">
+                    <div class="d-flex flex-row justify-content-between">         
+                        {{i.lot}}
+                        <a href class="badge badge-secondary">+</a>
+                    </div>
+                </td>
+            </tr>
+        
+            {% empty %}
+                <td>Задайте параметры для отображения...</td>
+            {% endfor %}
+         
+        </tbody>
+    </table>
 </div>
-
-
-</form>
-
-<table class="table table-striped">
-    <tbody>    
-        {% for i in records %}
-        <tr>        
-            <td>{{i.batch}}</td>
-            <td>{{i.material.code}}</td>
-            <td>{{i.material.material_name}}</td>
-            <td><a href>{{i.lot}}</a></td>
-            <td>{{i.quantity}}</td>
-            <td>{{i.w_user}}</td>
-        </tr>
-        {% empty %}
-        <td>Задайте параметры для отображения...</td>
-        {% endfor %}
-</tbody>
-</table>
 {% endblock%}

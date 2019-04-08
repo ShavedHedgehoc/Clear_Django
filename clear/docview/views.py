@@ -72,6 +72,21 @@ def simple(request):
     return render(request, 'success-page.html')
 
 
+class Batch_view(ListView):
+    template_name = "batch_view.html"
+
+    def get_queryset(self, **kwargs):
+        queryset = Batch_pr.objects.all()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(Batch_view, self).get_context_data(**kwargs)
+        filter_set = self.get_queryset()
+        context['records'] = filter_set
+        return context
+    
+
+
 class Weighting_view(ListView):
     template_name = "listdocs.html"
     # model = Production # Если раскомментить строчку, get_queryset не нужен
@@ -84,18 +99,17 @@ class Weighting_view(ListView):
     def get_context_data(self, **kwargs):
         context = super(Weighting_view, self).get_context_data(**kwargs)
         filter_set = self.get_queryset()
-
-    def get_context_data(self, **kwargs):
-        context = super(Weighting_view, self).get_context_data(**kwargs)
-        filter_set = self.get_queryset()
         if self.request.GET.get('filter'):
             if self.request.GET.get('batch'):
                 batch = self.request.GET.get('batch')
-                filter_set = filter_set.filter(batch__batch_name=batch)
-            if self.request.GET.get('material'):
-                material = self.request.GET.get('material')
+                context['batch']=batch
+                if self.request.GET.get('batch_ch'):
+                    filter_set = filter_set.filter(batch__batch_name=batch)                
+                    context['batch_ch']=True
+            if self.request.GET.get('code'):
+                code = self.request.GET.get('code')
                 filter_set = filter_set.filter(
-                    material__code=material)
+                    material__code=code)
             if self.request.GET.get('lot'):
                 lot = self.request.GET.get('lot')
                 filter_set = filter_set.filter(lot__lot_code=lot)
