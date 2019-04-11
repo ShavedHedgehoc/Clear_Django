@@ -1,6 +1,6 @@
 import requests
-import json
 import pandas as pd
+import json
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from .models import(
@@ -11,7 +11,6 @@ from .models import(
     Lot,
     W_user,
     Production2
-
 )
 
 
@@ -34,6 +33,12 @@ def get_documents_quant():
     except:
         quant = "Server not found"
     return quant
+
+
+def add_zero(q, v):
+    for i in range(q-len(v)):
+        v = "0"+v
+    return v
 
 
 def simple(request):
@@ -88,6 +93,22 @@ class Batch_view(ListView):
         context['records'] = filter_set
         return context
 
+class Varka_view(ListView):
+    template_name = "listvar.html"
+
+    def get_queryset(self, **kwargs):
+        queryset = Production2.objects.all()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(Varka_view, self).get_context_data(**kwargs)
+        filter_set = self.get_queryset()
+        filter_set = filter_set.filter(prod_batch__batch_name="101D9")
+        
+        f_se
+        context['records'] = filter_set
+        return context
+
 
 class Weighting_view(ListView):
     template_name = "listdocs.html"
@@ -133,8 +154,12 @@ def upload_simple_var(request):
     df_to_append = read_xl_file('static/var.xlsx')
     for index, row in df_to_append.iterrows():
         batch, _ = Batch_pr.objects.get_or_create(batch_name=row['batch'])
-        material, _ = Raw_material.objects.get_or_create(
-            material_name=row['name'], code=row['code'])
+        try:
+            material = Raw_material.objects.get(code=add_zero(6, row['code']))
+        except Raw_material.DoesNotExist:
+            material = Raw_material(code=add_zero(
+                6, row['code']), material_name=row['name'])
+            material.save()
         quantity = row['quant']
         new_prod_obj = Production2.objects.create(
             prod_batch=batch,

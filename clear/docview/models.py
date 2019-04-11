@@ -50,7 +50,7 @@ class Batch_pr(models.Model):
 class Raw_material(models.Model):
 
     code = models.CharField(max_length=6, unique=True)
-    material_name = models.CharField(max_length=120, unique=True)
+    material_name = models.CharField(max_length=120)
     unit = models.CharField(max_length=3, default="кг")
     rate = models.IntegerField(default=1)
     barcode = models.CharField(
@@ -63,21 +63,9 @@ class Raw_material(models.Model):
         return self.code + " " + self.material_name
 
 
-class Supplier(models.Model):
-    supplier_name = models.CharField(max_length=30)
-
-
-class Producer(models.Model):
-    producer_name = models.CharField(max_length=30)
-
-
 class Lot(models.Model):
 
     lot_code = models.CharField(max_length=20, unique=True)
-    prod_lot = models.CharField(max_length=30)
-    supplier_name = models.ForeignKey(Supplier, on_delete=models.CASCADE)
-    producer_name = models.ForeignKey(Producer, on_delete=models.CASCADE)
-    expire = models.DateField(blank=True, editable=False)
 
     def __str__(self):
         return self.lot_code
@@ -89,13 +77,6 @@ class W_user(models.Model):
 
     def __str__(self):
         return self.w_user_name
-
-
-class Production2(models.Model):
-
-    prod_batch = models.ForeignKey(Batch_pr, on_delete=models.CASCADE)
-    prod_material = models.ForeignKey(Raw_material, on_delete=models.CASCADE)
-    prod_decl_quantity = models.DecimalField(max_digits=7, decimal_places=3)
 
 
 class Weighting(models.Model):
@@ -114,3 +95,10 @@ class Weighting(models.Model):
         return str(self.weighting_id)+" "+str(self.batch)+" " +\
             str(self.material)+" "+str(self.lot)+" " + \
             str(self.w_user)+" "+str(self.quantity)
+
+
+class Production2(models.Model):
+
+    prod_batch = models.ForeignKey(Batch_pr, on_delete=models.CASCADE)
+    prod_material = models.ForeignKey(Raw_material, on_delete=models.CASCADE)
+    prod_decl_quantity = models.DecimalField(max_digits=7, decimal_places=3)

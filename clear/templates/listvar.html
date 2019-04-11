@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Файлов на сервере: {{files}} -->
+<div class="container-fluid">   
+    <table>
+            {% for i in records %}
+            <tr>
+            <td>{{i.prod_batch}} </td>
+            <td>{{i.prod_material}}</td>
+            <td>{{i.prod_decl_quantity}}</td>
+                
+                
+            {% empty %}
+                <td>Задайте параметры для отображения...</td>
+            {% endfor %}
+        </tr>
+        </table>     
+        
+</div>
+{% endblock%}
