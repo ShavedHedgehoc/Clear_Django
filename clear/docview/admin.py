@@ -9,6 +9,7 @@ from .models import(
     Lot,
     W_user,
     Weighting,
+    Production2,
 )
 
 admin.site.register(
@@ -19,5 +20,6 @@ admin.site.register(
         Lot,
         W_user,
         Weighting,
+        Production2,
     )
 )

@@ -1,5 +1,6 @@
 import requests
 import json
+import pandas as pd
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from .models import(
@@ -9,6 +10,8 @@ from .models import(
     Raw_material,
     Lot,
     W_user,
+    Production2
+
 )
 
 
@@ -84,7 +87,6 @@ class Batch_view(ListView):
         filter_set = self.get_queryset()
         context['records'] = filter_set
         return context
-    
 
 
 class Weighting_view(ListView):
@@ -102,10 +104,10 @@ class Weighting_view(ListView):
         if self.request.GET.get('filter'):
             if self.request.GET.get('batch'):
                 batch = self.request.GET.get('batch')
-                context['batch']=batch
+                context['batch'] = batch
                 if self.request.GET.get('batch_ch'):
-                    filter_set = filter_set.filter(batch__batch_name=batch)                
-                    context['batch_ch']=True
+                    filter_set = filter_set.filter(batch__batch_name=batch)
+                    context['batch_ch'] = True
             if self.request.GET.get('code'):
                 code = self.request.GET.get('code')
                 filter_set = filter_set.filter(
@@ -118,3 +120,25 @@ class Weighting_view(ListView):
         context['files'] = get_documents_quant()
 
         return context
+
+
+def read_xl_file(r_file):
+    xl = pd.ExcelFile(r_file)
+    sh = xl.sheet_names[0]
+    r_df = pd.read_excel(xl, sheet_name=sh, dtype=str)
+    return r_df
+
+
+def upload_simple_var(request):
+    df_to_append = read_xl_file('static/var.xlsx')
+    for index, row in df_to_append.iterrows():
+        batch, _ = Batch_pr.objects.get_or_create(batch_name=row['batch'])
+        material, _ = Raw_material.objects.get_or_create(
+            material_name=row['name'], code=row['code'])
+        quantity = row['quant']
+        new_prod_obj = Production2.objects.create(
+            prod_batch=batch,
+            prod_material=material,
+            prod_decl_quantity=quantity
+        )
+    return render(request, 'success-page.html')
