@@ -2,19 +2,37 @@
 {% block content %}
 <!-- Файлов на сервере: {{files}} -->
 <div class="container-fluid">   
-    <table>
-            {% for i in records %}
-            <tr>
+    
+        <table class="table table-bordered table-striped table-sm">
+            {% for i in records3 %}
+            
+        <tr>
+
             <td>{{i.prod_batch}} </td>
-            <td>{{i.prod_material}}</td>
-            <td>{{i.prod_decl_quantity}}</td>
+            <td>{{i.prod_material__code}} </td>
+            <td>{{i.prod_material__material_name}} </td>
+            <td>{{i.prod_decl_quantity}} </td>
+            {% if i.lll > 1 %}<td  rowspan = {{  i.lll|add:"-1" }} >
+            {%else%}    
+            <td>
+            {% endif %}
                 
+                <div class="list-group  list-group-flush">
+                {%for j in i.www %}
+                 <li class="list-group-item list-group-item-success"> <div><td> {{j.lot__lot_code}}</td> <td> {{j.ss|floatformat:3}}</td></div></li>
+                
+                 {%empty%}<li class="list-group-item list-group-item-danger"></li>
+                {% endfor%}
+                </div>
+                
+            </td>
                 
             {% empty %}
                 <td>Задайте параметры для отображения...</td>
             {% endfor %}
         </tr>
-        </table>     
+        </table>    
+       
         
 </div>
 {% endblock%}

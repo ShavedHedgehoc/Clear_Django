@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from django.shortcuts import render
 from django.views.generic.list import ListView
+from django.db.models import Count, Min, Sum, Avg
 from .models import(
     Weighting,
     Row_id,
@@ -93,6 +94,7 @@ class Batch_view(ListView):
         context['records'] = filter_set
         return context
 
+
 class Varka_view(ListView):
     template_name = "listvar.html"
 
@@ -101,12 +103,39 @@ class Varka_view(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        varka = "185D9"
         context = super(Varka_view, self).get_context_data(**kwargs)
         filter_set = self.get_queryset()
-        filter_set = filter_set.filter(prod_batch__batch_name="101D9")
-        
-        f_se
-        context['records'] = filter_set
+        # filter_set = filter_set.filter(prod_batch__batch_name=varka)
+        rec = []
+        for f in filter_set:
+            qs = Weighting.objects.filter(
+                batch__batch_name=f.prod_batch.batch_name,
+                material__code=f.prod_material.code
+            ).values('lot__lot_code').annotate(ss=Sum('quantity'))
+            a = {
+                'prod_batch': f.prod_batch.batch_name,
+                'prod_material__code': f.prod_material.code,
+                'prod_material__material_name': f.prod_material.material_name,
+                'prod_decl_quantity': f.prod_decl_quantity,
+                'www': qs,
+                'lll': qs.count
+            }
+            rec.append(a)
+
+        # f_set= filter_set.values('prod_material__code')
+
+        # # ff_set=Weighting.objects.filter(batch__batch_name="100D9", material__code__in=f_set).annotate(ss=Sum('quantity'))
+        # # fff_set =ff_set.values('material','lot').annotate(ss=Sum('quantity'))
+        # filter_set = filter_set.filter(prod_batch__batch_name="100D9")
+        # context['records2'] = f_set
+        # f_obj=filter_set.values('prod_material__code','prod_material__material_name').annotate(tt=Sum('prod_decl_quantity'))
+        # filter_set = filter_set.values('prod_batch','prod_material').annotate(tt=Sum('prod_decl_quantity'))
+        # # filter_set = filter_set.filter(prod_batch__batch_name="101D9").annotate(tt=Sum('prod_decl_quantity'))
+        # ff_set=Weighting.objects.filter(batch__batch_name="100D9").values('batch')
+        # context['records3'] = filter_set
+        context['records3'] = rec
+
         return context
 
 
@@ -150,6 +179,13 @@ def read_xl_file(r_file):
     return r_df
 
 
+def delete_prod(request):
+    objs = Production2.objects.all()
+    for obj in objs:
+        obj.delete()
+    return render(request, 'success-page.html')
+
+
 def upload_simple_var(request):
     df_to_append = read_xl_file('static/var.xlsx')
     for index, row in df_to_append.iterrows():
@@ -161,7 +197,7 @@ def upload_simple_var(request):
                 6, row['code']), material_name=row['name'])
             material.save()
         quantity = row['quant']
-        new_prod_obj = Production2.objects.create(
+        new_prod_obj, _ = Production2.objects.get_or_create(
             prod_batch=batch,
             prod_material=material,
             prod_decl_quantity=quantity
